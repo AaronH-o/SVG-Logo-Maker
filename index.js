@@ -1,12 +1,26 @@
 const inquirer = require('inquirer');
 const fs = require('node:fs');
+const shapes = require('./lib/shapes');
 
 const questions = [
-  'Enter text (up to 3 characters',
-  'Enter a color for the text',
   'Choose a shape',
+  'Enter text (up to 3 characters)',
+  'Enter a color for the text',
   'Enter a color for the shape'
 ];
+
+function writeToFile(fileName, data) {
+  fs.writeFile(fileName,
+`<svg version="1.1" width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  ${data.render()}
+</svg>`, err => {
+    if(err) {
+      console.error(err);
+    } else {
+      console.log('file written succcesfully');
+    }
+  })
+}
 
 function init() {
   let data = {
@@ -19,20 +33,20 @@ function init() {
   inquirer
     .prompt([
       {
-        name: "text",
-        type: "input",
+        name: "shape",
+        type: "list",
         message: questions[0],
+        choices: ["Circle", "Triangle", "Square"],
       },
       {
-        name: "textColor",
+        name: "text",
         type: "input",
         message: questions[1],
       },
       {
-        name: "shape",
-        type: "list",
+        name: "textColor",
+        type: "input",
         message: questions[2],
-        choices: ["Circle", "Triangle", "Square"],
       },
       {
         name: "shapeColor",
@@ -41,12 +55,24 @@ function init() {
       },
     ])
     .then((answer) => {
-      data.text = answer.text;
-      data.textColor = answer.textColor;
-      data.shape = answer.shape;
-      data.shapeColor = answer.shapeColor;
+      let data;
+
+      switch(answer.shape) {
+        case 'Circle':
+          data = new shapes.Circle(answer.text, answer.textColor, answer.shapeColor) 
+          break;
+        case 'Triangle':
+          data = new shapes.Triangle(answer.text, answer.textColor, answer.shapeColor) 
+          break;
+        case 'Square':
+          data = new shapes.Square(answer.text, answer.textColor, answer.shapeColor) 
+          break;
+      }
 
 
 
+      writeToFile(data.text.replace(/ /g,'-')+'.svg', data);
     })
 }
+
+init();
