@@ -17,7 +17,7 @@ function writeToFile(fileName, data) {
     if(err) {
       console.error(err);
     } else {
-      console.log('file written succcesfully');
+      console.log('Generated logo.svg');
     }
   })
 }
@@ -71,7 +71,7 @@ function init() {
 
 
 
-      writeToFile(data.text.replace(/ /g,'-')+'.svg', data);
+      writeToFile('logo.svg', data);
     })
 }
 
